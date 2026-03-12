@@ -41,16 +41,12 @@ describe("App", () => {
     expect(screen.getByText(/Preview in sync/i)).toBeInTheDocument();
   });
 
-  it("lets the user extend the visible grid to reveal distant drop targets", async () => {
-    const user = userEvent.setup();
-
+  it("does not render visible range controls", () => {
     render(<App />);
 
-    expect(screen.queryByTestId("cell-10-3")).not.toBeInTheDocument();
-
-    await user.type(screen.getByLabelText("Last visible row"), "10");
-
-    expect(screen.getByTestId("cell-10-3")).toBeInTheDocument();
-    expect(screen.getByText(/Extended range/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Visible Range/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Row framing/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/First visible row/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Last visible row/i)).not.toBeInTheDocument();
   });
 });

@@ -23,10 +23,8 @@ import { ElementCard } from "./components/ElementCard";
 import { ColorControls } from "./components/ColorControls";
 import { ElementDrawerInput } from "./components/ElementDrawerInput";
 import { ElementGrid } from "./components/ElementGrid";
-import { GridViewportControls } from "./components/GridViewportControls";
 import { getAccessibleTextColor } from "./lib/colors";
 import { getGridBounds, moveElement, parseCoordKey } from "./lib/grid";
-import { GridBounds } from "./lib/types";
 import { parseElementLines, serializeElements } from "./lib/parser";
 
 const INITIAL_TEXT = [
@@ -39,24 +37,6 @@ const INITIAL_TEXT = [
 const initialResult = parseElementLines(INITIAL_TEXT);
 const DEFAULT_SELECT_COLOR = "#FF0000";
 const DEFAULT_TEXT_INPUT_COLOR = "#0000FF";
-const EMPTY_VIEWPORT_RANGE = {
-  minRow: "",
-  maxRow: "",
-};
-
-function parseOptionalInteger(value: string) {
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return undefined;
-  }
-
-  if (!/^-?\d+$/.test(trimmed)) {
-    return null;
-  }
-
-  return Number(trimmed);
-}
 
 export default function App() {
   const [draftText, setDraftText] = React.useState(INITIAL_TEXT);
@@ -65,7 +45,6 @@ export default function App() {
   const [selectColor, setSelectColor] = React.useState(DEFAULT_SELECT_COLOR);
   const [textInputColor, setTextInputColor] = React.useState(DEFAULT_TEXT_INPUT_COLOR);
   const [activeDragId, setActiveDragId] = React.useState<string | null>(null);
-  const [viewportRange, setViewportRange] = React.useState(EMPTY_VIEWPORT_RANGE);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -137,62 +116,7 @@ export default function App() {
     setSelectColor(DEFAULT_SELECT_COLOR);
     setTextInputColor(DEFAULT_TEXT_INPUT_COLOR);
   };
-
-  const handleViewportChange = React.useCallback(
-    (field: keyof typeof EMPTY_VIEWPORT_RANGE, value: string) => {
-      setViewportRange((current) => ({
-        ...current,
-        [field]: value,
-      }));
-    },
-    []
-  );
-
-  const handleResetViewport = React.useCallback(() => {
-    setViewportRange(EMPTY_VIEWPORT_RANGE);
-  }, []);
-
-  const visibleRangeState = React.useMemo(() => {
-    const parsed = {
-      minRow: parseOptionalInteger(viewportRange.minRow),
-      maxRow: parseOptionalInteger(viewportRange.maxRow),
-    };
-    const nextBounds: Partial<GridBounds> = {};
-    const invalidFields = Object.entries(parsed)
-      .filter(([, value]) => value === null)
-      .map(([key]) => key);
-    const errors: string[] = [];
-
-    if (invalidFields.length > 0) {
-      errors.push("Visible range fields must contain whole numbers.");
-    }
-
-    if (parsed.minRow !== null && parsed.minRow !== undefined) {
-      nextBounds.minRow = parsed.minRow;
-    }
-
-    if (parsed.maxRow !== null && parsed.maxRow !== undefined) {
-      nextBounds.maxRow = parsed.maxRow;
-    }
-
-    if (
-      nextBounds.minRow !== undefined &&
-      nextBounds.maxRow !== undefined &&
-      nextBounds.minRow > nextBounds.maxRow
-    ) {
-      delete nextBounds.minRow;
-      delete nextBounds.maxRow;
-      errors.push("Visible row range must keep the minimum row below the maximum row.");
-    }
-
-    return {
-      bounds: nextBounds,
-      error: errors[0],
-      hasOverrides: Object.keys(nextBounds).length > 0,
-    };
-  }, [viewportRange]);
-
-  const bounds = getGridBounds(elements, visibleRangeState.bounds);
+  const bounds = getGridBounds(elements);
   const rowCount = bounds ? bounds.maxRow - bounds.minRow + 1 : 0;
   const columnCount = bounds ? bounds.maxCol - bounds.minCol + 1 : 0;
   const cellCount = rowCount * columnCount;
@@ -261,10 +185,6 @@ export default function App() {
             />
             <Chip label={`${cellCount} visible cells`} variant="outlined" />
             <Chip
-              label={visibleRangeState.hasOverrides ? "Extended range" : "Auto-fit range"}
-              variant="outlined"
-            />
-            <Chip
               label={isPreviewStale ? "Showing last valid preview" : "Preview in sync"}
               color={isPreviewStale ? "warning" : "success"}
               variant="filled"
@@ -299,15 +219,6 @@ export default function App() {
                     rhythm while you drag or validate the layout.
                   </Typography>
                 </Box>
-
-                <GridViewportControls
-                  minRow={viewportRange.minRow}
-                  maxRow={viewportRange.maxRow}
-                  hasOverrides={visibleRangeState.hasOverrides}
-                  error={visibleRangeState.error}
-                  onChange={handleViewportChange}
-                  onReset={handleResetViewport}
-                />
 
                 {isPreviewStale ? (
                   <Box className="preview-status-banner preview-status-banner-warning">

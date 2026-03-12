@@ -260,24 +260,6 @@ body {
   width: 100%;
 }
 
-.viewport-controls {
-  padding: 16px 18px;
-  border: 1px solid rgba(21, 32, 50, 0.08);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.viewport-controls-grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
-}
-
-.viewport-controls .MuiOutlinedInput-root {
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.82);
-}
-
 .preview-status-banner-warning {
   padding: 10px 14px;
   border-color: rgba(195, 126, 23, 0.12);
