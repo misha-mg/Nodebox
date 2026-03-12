@@ -37,11 +37,66 @@ const INITIAL_TEXT = [
 const initialResult = parseElementLines(INITIAL_TEXT);
 const DEFAULT_SELECT_COLOR = "#FF0000";
 const DEFAULT_TEXT_INPUT_COLOR = "#0000FF";
+const SCHEMA_DRAFT_STORAGE_KEY = "nodebox.elementDrawer.schemaDraft";
+const SCHEMA_LAST_VALID_STORAGE_KEY = "nodebox.elementDrawer.schemaLastValid";
+
+interface PersistedSchemaState {
+  draftText: string;
+  elements: ReturnType<typeof parseElementLines>["elements"];
+  errors: ReturnType<typeof parseElementLines>["errors"];
+}
+
+function loadPersistedSchemaState(): PersistedSchemaState {
+  if (typeof window === "undefined") {
+    return {
+      draftText: INITIAL_TEXT,
+      elements: initialResult.elements,
+      errors: initialResult.errors,
+    };
+  }
+
+  const storedDraftText = window.localStorage.getItem(SCHEMA_DRAFT_STORAGE_KEY);
+
+  if (storedDraftText === null) {
+    return {
+      draftText: INITIAL_TEXT,
+      elements: initialResult.elements,
+      errors: initialResult.errors,
+    };
+  }
+
+  const parsedDraft = parseElementLines(storedDraftText);
+
+  if (parsedDraft.errors.length === 0) {
+    return {
+      draftText: storedDraftText,
+      elements: parsedDraft.elements,
+      errors: parsedDraft.errors,
+    };
+  }
+
+  const storedLastValidText = window.localStorage.getItem(
+    SCHEMA_LAST_VALID_STORAGE_KEY
+  );
+  const parsedLastValid = storedLastValidText
+    ? parseElementLines(storedLastValidText)
+    : null;
+
+  return {
+    draftText: storedDraftText,
+    elements:
+      parsedLastValid && parsedLastValid.errors.length === 0
+        ? parsedLastValid.elements
+        : [],
+    errors: parsedDraft.errors,
+  };
+}
 
 export default function App() {
-  const [draftText, setDraftText] = React.useState(INITIAL_TEXT);
-  const [elements, setElements] = React.useState(initialResult.elements);
-  const [errors, setErrors] = React.useState(initialResult.errors);
+  const persistedState = React.useMemo(loadPersistedSchemaState, []);
+  const [draftText, setDraftText] = React.useState(persistedState.draftText);
+  const [elements, setElements] = React.useState(persistedState.elements);
+  const [errors, setErrors] = React.useState(persistedState.errors);
   const [selectColor, setSelectColor] = React.useState(DEFAULT_SELECT_COLOR);
   const [textInputColor, setTextInputColor] = React.useState(DEFAULT_TEXT_INPUT_COLOR);
   const [activeDragId, setActiveDragId] = React.useState<string | null>(null);
@@ -52,6 +107,16 @@ export default function App() {
       },
     })
   );
+
+  React.useEffect(() => {
+    window.localStorage.setItem(SCHEMA_DRAFT_STORAGE_KEY, draftText);
+  }, [draftText]);
+
+  React.useEffect(() => {
+    if (errors.length === 0) {
+      window.localStorage.setItem(SCHEMA_LAST_VALID_STORAGE_KEY, draftText);
+    }
+  }, [draftText, errors]);
 
   const handleTextChange = (value: string) => {
     setDraftText(value);

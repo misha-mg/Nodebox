@@ -1,8 +1,12 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
 describe("App", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it("renders the initial grid and keeps the last valid layout on textarea errors", async () => {
     const user = userEvent.setup();
 
@@ -47,5 +51,40 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: /drawer schema/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /adjacency colors/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /reset colors/i })).toBeInTheDocument();
+  });
+
+  it("allows interacting with inputs rendered inside grid cells", async () => {
+    const user = userEvent.setup();
+
+    render(<App />);
+
+    const textInput = screen.getByPlaceholderText("Enter first name");
+    await user.click(textInput);
+    await user.type(textInput, "Alice");
+    expect(textInput).toHaveValue("Alice");
+
+    const selectCell = screen.getByTestId("cell-1-2");
+    const selectInput = within(selectCell).getByRole("combobox");
+    await user.click(selectInput);
+    await user.click(screen.getByRole("option", { name: "Canada" }));
+    expect(selectInput).toHaveTextContent("Canada");
+  });
+
+  it("restores the saved schema draft after remounting", () => {
+    window.localStorage.setItem(
+      "nodebox.elementDrawer.schemaDraft",
+      "4;2;Email;TEXT_INPUT;Enter email"
+    );
+    window.localStorage.setItem(
+      "nodebox.elementDrawer.schemaLastValid",
+      "4;2;Email;TEXT_INPUT;Enter email"
+    );
+
+    render(<App />);
+
+    expect(screen.getByLabelText("Schema")).toHaveValue(
+      "4;2;Email;TEXT_INPUT;Enter email"
+    );
+    expect(screen.getByTestId("cell-4-2")).toBeInTheDocument();
   });
 });
