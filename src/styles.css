@@ -26,6 +26,12 @@ body {
   overflow-x: clip;
 }
 
+@supports (min-height: 100dvh) {
+  #root {
+    min-height: 100dvh;
+  }
+}
+
 .element-drawer-shell {
   position: relative;
 }
@@ -254,6 +260,13 @@ body {
 .grid-wrapper {
   overflow-x: auto;
   padding-bottom: 4px;
+}
+
+.cell-drag-handle {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .element-grid {

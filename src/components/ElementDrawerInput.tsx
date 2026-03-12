@@ -86,7 +86,7 @@ export function ElementDrawerInput({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         multiline
-        minRows={6}
+        rows={6}
         fullWidth
         className="drawer-input-field"
         helperText={

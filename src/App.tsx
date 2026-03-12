@@ -14,7 +14,8 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -101,9 +102,15 @@ export default function App() {
   const [textInputColor, setTextInputColor] = React.useState(DEFAULT_TEXT_INPUT_COLOR);
   const [activeDragId, setActiveDragId] = React.useState<string | null>(null);
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
         distance: 6,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 8,
       },
     })
   );
@@ -117,6 +124,34 @@ export default function App() {
       window.localStorage.setItem(SCHEMA_LAST_VALID_STORAGE_KEY, draftText);
     }
   }, [draftText, errors]);
+
+  React.useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    if (activeDragId === null) {
+      return;
+    }
+
+    const { body, documentElement } = document;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyTouchAction = body.style.touchAction;
+    const previousDocumentOverflow = documentElement.style.overflow;
+    const previousDocumentTouchAction = documentElement.style.touchAction;
+
+    body.style.overflow = "hidden";
+    body.style.touchAction = "none";
+    documentElement.style.overflow = "hidden";
+    documentElement.style.touchAction = "none";
+
+    return () => {
+      body.style.overflow = previousBodyOverflow;
+      body.style.touchAction = previousBodyTouchAction;
+      documentElement.style.overflow = previousDocumentOverflow;
+      documentElement.style.touchAction = previousDocumentTouchAction;
+    };
+  }, [activeDragId]);
 
   const handleTextChange = (value: string) => {
     setDraftText(value);
