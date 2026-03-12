@@ -21,12 +21,12 @@ const elements: ElementDefinition[] = [
 ];
 
 describe("moveElement", () => {
-  it("expands the visible grid range when the UI asks to expose distant coordinates", () => {
-    expect(getGridBounds(elements, { maxRow: 8, maxCol: 9 })).toEqual({
+  it("adds one empty cell of padding around the current layout", () => {
+    expect(getGridBounds(elements)).toEqual({
       minRow: 0,
-      maxRow: 8,
+      maxRow: 2,
       minCol: 0,
-      maxCol: 9,
+      maxCol: 3,
     });
   });
 

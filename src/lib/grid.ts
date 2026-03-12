@@ -16,28 +16,9 @@ export function parseCoordKey(key: string): Coordinate | null {
   return { row, col };
 }
 
-function hasCompleteBounds(bounds: Partial<GridBounds>) {
-  return (
-    bounds.minRow !== undefined &&
-    bounds.maxRow !== undefined &&
-    bounds.minCol !== undefined &&
-    bounds.maxCol !== undefined
-  );
-}
-
-export function getGridBounds(
-  elements: ElementDefinition[],
-  visibleRange: Partial<GridBounds> = {}
-): GridBounds | null {
+export function getGridBounds(elements: ElementDefinition[]): GridBounds | null {
   if (elements.length === 0) {
-    return hasCompleteBounds(visibleRange)
-      ? {
-          minRow: visibleRange.minRow!,
-          maxRow: visibleRange.maxRow!,
-          minCol: visibleRange.minCol!,
-          maxCol: visibleRange.maxCol!,
-        }
-      : null;
+    return null;
   }
 
   const rows = elements.map((element) => element.row);
@@ -49,12 +30,7 @@ export function getGridBounds(
     maxCol: Math.max(...cols) + 1,
   };
 
-  return {
-    minRow: Math.min(elementBounds.minRow, visibleRange.minRow ?? elementBounds.minRow),
-    maxRow: Math.max(elementBounds.maxRow, visibleRange.maxRow ?? elementBounds.maxRow),
-    minCol: Math.min(elementBounds.minCol, visibleRange.minCol ?? elementBounds.minCol),
-    maxCol: Math.max(elementBounds.maxCol, visibleRange.maxCol ?? elementBounds.maxCol),
-  };
+  return elementBounds;
 }
 
 export function getCellMap(elements: ElementDefinition[]) {

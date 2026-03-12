@@ -41,12 +41,11 @@ describe("App", () => {
     expect(screen.getByText(/Preview in sync/i)).toBeInTheDocument();
   });
 
-  it("does not render visible range controls", () => {
+  it("renders shared section headers for schema and color controls", () => {
     render(<App />);
 
-    expect(screen.queryByText(/Visible Range/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Row framing/i)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(/First visible row/i)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(/Last visible row/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /drawer schema/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /adjacency colors/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /reset colors/i })).toBeInTheDocument();
   });
 });

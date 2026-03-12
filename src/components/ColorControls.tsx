@@ -1,6 +1,7 @@
 import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
 import { Box, Button, Chip, Stack, Typography } from "@mui/material";
 import { ColorLegend } from "./ColorLegend";
+import { SectionCard } from "./SectionCard";
 
 interface ColorControlsProps {
   selectColor: string;
@@ -35,63 +36,51 @@ export function ColorControls({
   ];
 
   return (
-    <Box className="controls-section">
-      <Stack spacing={2.25}>
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          spacing={2}
-          alignItems={{ xs: "stretch", md: "flex-start" }}
-          justifyContent="space-between"
-          className="controls-section-header"
+    <SectionCard
+      title="Adjacency colors"
+      actions={
+        <Button
+          variant="text"
+          onClick={onResetDefaults}
+          startIcon={<RestartAltRoundedIcon />}
+          className="secondary-action-button"
         >
-          <Box>
-            <Typography variant="h6" className="section-title">
-              Adjacency colors
-            </Typography>
-          </Box>
-          <Button
-            variant="text"
-            onClick={onResetDefaults}
-            startIcon={<RestartAltRoundedIcon />}
-            className="secondary-action-button"
-          >
-            Reset colors
-          </Button>
-        </Stack>
-
-        <Box className="color-control-grid">
-          {controls.map((control) => (
-            <Box key={control.label} className="color-control-card">
-              <Box className="color-control-heading">
-                <Box>
-                  <Typography variant="subtitle2">{control.label}</Typography>
-                  <Typography variant="caption" className="color-control-copy">
-                    {control.hint}
-                  </Typography>
-                </Box>
-                <Chip
-                  label={control.value.toUpperCase()}
-                  size="small"
-                  className="color-hex-chip"
-                />
+          Reset colors
+        </Button>
+      }
+    >
+      <Box className="color-control-grid">
+        {controls.map((control) => (
+          <Box key={control.label} className="color-control-card">
+            <Box className="color-control-heading">
+              <Box>
+                <Typography variant="subtitle2">{control.label}</Typography>
+                <Typography variant="caption" className="color-control-copy">
+                  {control.hint}
+                </Typography>
               </Box>
-
-              <label className="color-picker-row">
-                <input
-                  aria-label={control.inputLabel}
-                  className="color-picker-native"
-                  type="color"
-                  value={control.value}
-                  onChange={(event) => control.onChange(event.target.value)}
-                />
-                <span className="color-picker-label">Pick accent</span>
-              </label>
+              <Chip
+                label={control.value.toUpperCase()}
+                size="small"
+                className="color-hex-chip"
+              />
             </Box>
-          ))}
-        </Box>
 
-        <ColorLegend selectColor={selectColor} textInputColor={textInputColor} />
-      </Stack>
-    </Box>
+            <label className="color-picker-row">
+              <input
+                aria-label={control.inputLabel}
+                className="color-picker-native"
+                type="color"
+                value={control.value}
+                onChange={(event) => control.onChange(event.target.value)}
+              />
+              <span className="color-picker-label">Pick accent</span>
+            </label>
+          </Box>
+        ))}
+      </Box>
+
+      <ColorLegend selectColor={selectColor} textInputColor={textInputColor} />
+    </SectionCard>
   );
 }

@@ -5,9 +5,6 @@
   --text-main: #162033;
   --text-muted: #52617c;
   --surface-soft: rgba(247, 249, 252, 0.92);
-  --surface-warm: rgba(255, 245, 237, 0.82);
-  --accent-orange: #cf6f3f;
-  --accent-blue: #386d9d;
   --shadow-soft: 0 14px 32px rgba(25, 39, 64, 0.07);
   --grid-cell-width: 184px;
   --grid-cell-height: 176px;
@@ -72,10 +69,6 @@ body {
   padding: 24px;
 }
 
-.controls-panel {
-  width: 100%;
-}
-
 .controls-section {
   padding: 20px;
   border: 1px solid rgba(21, 32, 50, 0.08);
@@ -86,16 +79,6 @@ body {
 
 .controls-section-header {
   gap: 16px;
-}
-
-.section-kicker {
-  display: inline-block;
-  margin-bottom: 8px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: rgba(22, 32, 51, 0.58);
 }
 
 .section-title {
@@ -140,9 +123,6 @@ body {
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
-}
-
-.drawer-input-field .MuiOutlinedInput-root {
   align-items: stretch;
 }
 

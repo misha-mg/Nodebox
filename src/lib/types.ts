@@ -1,5 +1,3 @@
-export type InputKind = "SELECT" | "TEXT_INPUT";
-
 export type ElementDefinition =
   | {
       id: string;
