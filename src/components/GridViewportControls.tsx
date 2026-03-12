@@ -4,22 +4,15 @@ import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material"
 interface GridViewportControlsProps {
   minRow: string;
   maxRow: string;
-  minCol: string;
-  maxCol: string;
   hasOverrides: boolean;
   error?: string;
-  onChange: (
-    field: "minRow" | "maxRow" | "minCol" | "maxCol",
-    value: string
-  ) => void;
+  onChange: (field: "minRow" | "maxRow", value: string) => void;
   onReset: () => void;
 }
 
 export function GridViewportControls({
   minRow,
   maxRow,
-  minCol,
-  maxCol,
   hasOverrides,
   error,
   onChange,
@@ -36,13 +29,7 @@ export function GridViewportControls({
         >
           <Box>
             <Typography className="section-kicker">Visible Range</Typography>
-            <Typography variant="h6" className="section-title">
-              Expose distant drop targets
-            </Typography>
-            <Typography variant="body2" className="panel-copy">
-              Extend any edge to reveal more blank cells while always keeping
-              the current layout in view.
-            </Typography>
+            <Typography variant="h6" className="section-title">Row framing</Typography>
           </Box>
 
           <Button
@@ -58,31 +45,17 @@ export function GridViewportControls({
 
         <Box className="viewport-controls-grid">
           <TextField
-            label="Min visible row"
+            label="First visible row"
             type="number"
             value={minRow}
             onChange={(event) => onChange("minRow", event.target.value)}
             fullWidth
           />
           <TextField
-            label="Max visible row"
+            label="Last visible row"
             type="number"
             value={maxRow}
             onChange={(event) => onChange("maxRow", event.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="Min visible column"
-            type="number"
-            value={minCol}
-            onChange={(event) => onChange("minCol", event.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="Max visible column"
-            type="number"
-            value={maxCol}
-            onChange={(event) => onChange("maxCol", event.target.value)}
             fullWidth
           />
         </Box>
@@ -91,8 +64,7 @@ export function GridViewportControls({
           <Alert severity="warning">{error}</Alert>
         ) : (
           <Typography variant="caption" className="panel-copy">
-            Leave fields blank to auto-fit around the current elements, or set
-            just one edge to expand the grid in that direction.
+            Blank fields keep auto-fit.
           </Typography>
         )}
       </Stack>

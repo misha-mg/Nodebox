@@ -11,7 +11,7 @@ describe("App", () => {
     expect(screen.getByText("Grid preview")).toBeInTheDocument();
     expect(screen.getByTestId("cell-1-1")).toBeInTheDocument();
 
-    const field = screen.getByLabelText("Element drawer schema");
+    const field = screen.getByLabelText("Schema");
 
     await user.type(field, "\n1;4;Broken;RADIO;a,b");
 
@@ -46,12 +46,11 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(screen.queryByTestId("cell-10-10")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("cell-10-3")).not.toBeInTheDocument();
 
-    await user.type(screen.getByLabelText("Max visible row"), "10");
-    await user.type(screen.getByLabelText("Max visible column"), "10");
+    await user.type(screen.getByLabelText("Last visible row"), "10");
 
-    expect(screen.getByTestId("cell-10-10")).toBeInTheDocument();
+    expect(screen.getByTestId("cell-10-3")).toBeInTheDocument();
     expect(screen.getByText(/Extended range/i)).toBeInTheDocument();
   });
 });

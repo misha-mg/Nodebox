@@ -9,10 +9,9 @@ interface ColorLegendProps {
 interface LegendSwatchProps {
   color: string;
   label: string;
-  description: string;
 }
 
-function LegendSwatch({ color, label, description }: LegendSwatchProps) {
+function LegendSwatch({ color, label }: LegendSwatchProps) {
   return (
     <Box className="legend-item">
       <Box
@@ -23,9 +22,6 @@ function LegendSwatch({ color, label, description }: LegendSwatchProps) {
       />
       <Box>
         <Typography variant="subtitle2">{label}</Typography>
-        <Typography variant="caption" color="text.secondary">
-          {description}
-        </Typography>
       </Box>
     </Box>
   );
@@ -36,29 +32,14 @@ export function ColorLegend({
   textInputColor,
 }: ColorLegendProps) {
   return (
-    <Stack spacing={1.5} className="legend-panel">
+    <Stack spacing={1.25} className="legend-panel">
       <Box>
-        <Typography className="section-kicker">Legend</Typography>
-        <Typography variant="body2" className="panel-copy">
-          A quick read of how both adjacency rules combine on the canvas.
-        </Typography>
+        <Typography className="legend-title">Legend</Typography>
       </Box>
       <Box className="legend-grid">
-        <LegendSwatch
-          color={selectColor}
-          label="SELECT diagonal"
-          description="Applied to diagonal neighbors."
-        />
-        <LegendSwatch
-          color={textInputColor}
-          label="TEXT_INPUT orthogonal"
-          description="Applied to top, bottom, left, and right neighbors."
-        />
-        <LegendSwatch
-          color={blendColors([selectColor, textInputColor])}
-          label="Mixed overlap"
-          description="Shown when both adjacency rules hit the same cell."
-        />
+        <LegendSwatch color={selectColor} label="SELECT diagonal" />
+        <LegendSwatch color={textInputColor} label="TEXT_INPUT orthogonal" />
+        <LegendSwatch color={blendColors([selectColor, textInputColor])} label="Mixed overlap" />
       </Box>
     </Stack>
   );

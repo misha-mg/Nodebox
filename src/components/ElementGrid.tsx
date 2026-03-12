@@ -47,7 +47,8 @@ export function ElementGrid({
       <Box
         className="element-grid"
         sx={{
-          gridTemplateColumns: `repeat(${columns.length}, minmax(140px, 1fr))`,
+          gridTemplateColumns: `repeat(${columns.length}, var(--grid-cell-width))`,
+          gridAutoRows: "var(--grid-cell-height)",
         }}
       >
         {rows.flatMap((row) =>

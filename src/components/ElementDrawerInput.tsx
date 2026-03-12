@@ -29,10 +29,10 @@ export function ElementDrawerInput({
 }: ElementDrawerInputProps) {
   const lineCount = value.trim().length === 0 ? 0 : value.split("\n").length;
   const statusLabel =
-    errors.length > 0 ? `${errors.length} issue${errors.length > 1 ? "s" : ""}` : "Live preview";
+    errors.length > 0 ? `${errors.length} issue${errors.length > 1 ? "s" : ""}` : "Synced";
 
   return (
-    <Box className="controls-section controls-section-accent">
+    <Box className="controls-section">
       <Stack spacing={2.25}>
         <Stack
           direction={{ xs: "column", md: "row" }}
@@ -42,7 +42,6 @@ export function ElementDrawerInput({
           className="controls-section-header"
         >
           <Box>
-            <Typography className="section-kicker">Layout Input</Typography>
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={1}
@@ -50,7 +49,7 @@ export function ElementDrawerInput({
               sx={{ mb: 0.75 }}
             >
               <Typography variant="h5" className="section-title">
-                Compose the drawer
+                Drawer schema
               </Typography>
               <Chip
                 size="small"
@@ -59,10 +58,6 @@ export function ElementDrawerInput({
                 variant={errors.length > 0 ? "filled" : "outlined"}
               />
             </Stack>
-            <Typography variant="body2" className="panel-copy">
-              Keep the structure clean and the preview will stay in sync as you
-              type, validate, and drag cells around the grid.
-            </Typography>
           </Box>
 
           <Stack
@@ -102,11 +97,10 @@ export function ElementDrawerInput({
             variant="outlined"
           />
           <Chip label={`${lineCount} line${lineCount === 1 ? "" : "s"}`} variant="outlined" />
-          <Chip label="Drag updates coordinates automatically" variant="outlined" />
         </Stack>
 
         <TextField
-          label="Element drawer schema"
+          label="Schema"
           placeholder="1;2;First Name;TEXT_INPUT;Enter your first name"
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -116,8 +110,8 @@ export function ElementDrawerInput({
           className="drawer-input-field"
           helperText={
             errors.length > 0
-              ? "Fix the highlighted lines below to refresh the grid."
-              : "One element per line. Dragging cells rewrites these coordinates automatically."
+              ? "Fix the lines below to refresh the preview."
+              : "One element per line. Dragging cells rewrites coordinates automatically."
           }
           sx={{
             "& .MuiInputBase-input": {
@@ -132,7 +126,7 @@ export function ElementDrawerInput({
         {errors.length > 0 ? (
           <Alert severity="error" className="input-error-alert">
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Fix the following lines to update the grid:
+              Review these lines:
             </Typography>
 
             <Stack spacing={0.5}>

@@ -19,7 +19,6 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import "./styles.css";
-import { ColorLegend } from "./components/ColorLegend";
 import { ElementCard } from "./components/ElementCard";
 import { ColorControls } from "./components/ColorControls";
 import { ElementDrawerInput } from "./components/ElementDrawerInput";
@@ -43,8 +42,6 @@ const DEFAULT_TEXT_INPUT_COLOR = "#0000FF";
 const EMPTY_VIEWPORT_RANGE = {
   minRow: "",
   maxRow: "",
-  minCol: "",
-  maxCol: "",
 };
 
 function parseOptionalInteger(value: string) {
@@ -159,8 +156,6 @@ export default function App() {
     const parsed = {
       minRow: parseOptionalInteger(viewportRange.minRow),
       maxRow: parseOptionalInteger(viewportRange.maxRow),
-      minCol: parseOptionalInteger(viewportRange.minCol),
-      maxCol: parseOptionalInteger(viewportRange.maxCol),
     };
     const nextBounds: Partial<GridBounds> = {};
     const invalidFields = Object.entries(parsed)
@@ -188,24 +183,6 @@ export default function App() {
       delete nextBounds.minRow;
       delete nextBounds.maxRow;
       errors.push("Visible row range must keep the minimum row below the maximum row.");
-    }
-
-    if (parsed.minCol !== null && parsed.minCol !== undefined) {
-      nextBounds.minCol = parsed.minCol;
-    }
-
-    if (parsed.maxCol !== null && parsed.maxCol !== undefined) {
-      nextBounds.maxCol = parsed.maxCol;
-    }
-
-    if (
-      nextBounds.minCol !== undefined &&
-      nextBounds.maxCol !== undefined &&
-      nextBounds.minCol > nextBounds.maxCol
-    ) {
-      delete nextBounds.minCol;
-      delete nextBounds.maxCol;
-      errors.push("Visible column range must keep the minimum column below the maximum column.");
     }
 
     return {
@@ -294,30 +271,23 @@ export default function App() {
             />
           </Stack>
 
-          <Paper className="workspace-panel controls-panel" elevation={0}>
-            <Stack spacing={3}>
-              <ElementDrawerInput
-                value={draftText}
-                onChange={handleTextChange}
-                errors={errors}
-                onLoadDemo={handleLoadDemo}
-                onClear={handleClearCanvas}
-              />
+          <Stack spacing={3}>
+            <ElementDrawerInput
+              value={draftText}
+              onChange={handleTextChange}
+              errors={errors}
+              onLoadDemo={handleLoadDemo}
+              onClear={handleClearCanvas}
+            />
 
-              <ColorControls
-                selectColor={selectColor}
-                textInputColor={textInputColor}
-                onSelectColorChange={setSelectColor}
-                onTextInputColorChange={setTextInputColor}
-                onResetDefaults={handleResetColors}
-              />
-
-              <ColorLegend
-                selectColor={selectColor}
-                textInputColor={textInputColor}
-              />
-            </Stack>
-          </Paper>
+            <ColorControls
+              selectColor={selectColor}
+              textInputColor={textInputColor}
+              onSelectColorChange={setSelectColor}
+              onTextInputColorChange={setTextInputColor}
+              onResetDefaults={handleResetColors}
+            />
+          </Stack>
 
           <Box className="preview-breakout">
             <Paper className="workspace-panel grid-panel grid-panel-full" elevation={0}>
@@ -325,28 +295,27 @@ export default function App() {
                 <Box>
                   <Typography variant="h5">Grid preview</Typography>
                   <Typography variant="body2" className="panel-copy">
-                    Empty placeholders remain visible, and you can widen the
-                    visible range to expose drop targets beyond the current
-                    layout.
+                    Blank cells stay visible, and the preview keeps a stable
+                    rhythm while you drag or validate the layout.
                   </Typography>
                 </Box>
 
                 <GridViewportControls
                   minRow={viewportRange.minRow}
                   maxRow={viewportRange.maxRow}
-                  minCol={viewportRange.minCol}
-                  maxCol={viewportRange.maxCol}
                   hasOverrides={visibleRangeState.hasOverrides}
                   error={visibleRangeState.error}
                   onChange={handleViewportChange}
                   onReset={handleResetViewport}
                 />
 
-                <Alert severity={isPreviewStale ? "warning" : "success"}>
-                  {isPreviewStale
-                    ? "The textarea contains validation errors, so the grid is still showing the last valid layout."
-                    : "The grid is fully synced with the textarea. Drag any filled cell to move or swap it."}
-                </Alert>
+                {isPreviewStale ? (
+                  <Box className="preview-status-banner preview-status-banner-warning">
+                    <Typography variant="body2">
+                      Showing the last valid layout while schema errors are present.
+                    </Typography>
+                  </Box>
+                ) : null}
 
                 <ElementGrid
                   elements={elements}
